@@ -9,13 +9,15 @@ import (
 // Adds a product to the database
 // responses:
 // 	204: created
+//	422: errorValidation
+//  501: errorResponse
 
-// AddProduct adds a product to the data store
-func (p *Products) AddProduct(w http.ResponseWriter, r *http.Request) {
-	p.logger.Println("Handle POST Product")
+// Create adds a product to the data store
+func (p *Products) Create(w http.ResponseWriter, r *http.Request) {
+	p.l.Println("Handle POST Product")
 
 	product := r.Context().Value(KeyProduct{}).(*data.Product)
 
-	p.logger.Printf("Prod: %#v", product)
+	p.l.Printf("[DEBUG] Inserting product : %#v\n", product)
 	data.AddProduct(product)
 }

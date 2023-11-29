@@ -1,64 +1,42 @@
-// Package classification of Product API
-//
-// Documentation for Product API
-//
-//	Schemes: http
-//	BasePath: /
-//	Version: 1.0.0
-//
-//	Consumes:
-//		- application/json
-//
-//	Produces:
-//		- application/json
-//
-// swagger:meta
 package handlers
 
 import (
-	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"product-api/data"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 type Products struct {
-	logger *log.Logger
+	l *log.Logger
+	v *data.Validation
 }
 
-func NewProducts(l *log.Logger) *Products {
-	return &Products{l}
+func NewProducts(l *log.Logger, v *data.Validation) *Products {
+	return &Products{l, v}
 }
 
 type KeyProduct struct{}
 
-func (p *Products) MiddlewareProductValidation(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+type GenericError struct {
+	Message string `json:"message"`
+}
 
-		prod := &data.Product{}
+func getProductID(r *http.Request) int {
+	vars := mux.Vars(r)
 
-		err := prod.FromJSON(r.Body)
-		if err != nil {
-			p.logger.Println("[ERROR] deserializing product", err)
-			http.Error(w, "Error reading Product", http.StatusBadRequest)
-			return
-		}
+	id, err := strconv.Atoi(vars["id"])
 
-		err = prod.Validate()
-		if err != nil {
-			p.logger.Println("[ERROR] validating product", err)
-			http.Error(
-				w,
-				fmt.Sprintf("Error validating Product: %s", err),
-				http.StatusBadRequest,
-			)
-			return
-		}
+	if err != nil {
+		// http.Error(w, "Unable to convert id", http.StatusBadRequest)
+		panic(err)
+	}
 
-		ctx := context.WithValue(r.Context(), KeyProduct{}, prod)
-		req := r.WithContext(ctx)
+	return id
+}
 
-		next.ServeHTTP(w, req)
-	})
+type ValidationError struct {
+	Messages []string `json:"messages"`
 }
