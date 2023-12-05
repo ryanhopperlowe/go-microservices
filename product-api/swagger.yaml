@@ -3,14 +3,16 @@ consumes:
     - application/json
 definitions:
     GenericError:
+        description: GenericError generic error
         properties:
             message:
+                description: message
                 type: string
                 x-go-name: Message
         type: object
-        x-go-package: product-api/handlers
+        x-go-package: product-api/sdk/models
     Product:
-        description: Product defines the structure for an API product
+        description: Product Product defines the structure for an API product
         properties:
             description:
                 description: the description for this product
@@ -44,16 +46,18 @@ definitions:
             - price
             - sku
         type: object
-        x-go-package: product-api/data
+        x-go-package: product-api/sdk/models
     ValidationError:
+        description: ValidationError validation error
         properties:
             messages:
+                description: messages
                 items:
                     type: string
                 type: array
                 x-go-name: Messages
         type: object
-        x-go-package: product-api/handlers
+        x-go-package: product-api/sdk/models
 info:
     description: Documentation for Product API
     title: of Product API
@@ -86,11 +90,24 @@ paths:
                     $ref: '#/responses/errorResponse'
             tags:
                 - products
+        put:
+            description: Updates a product
+            operationId: updateProduct
+            parameters:
+                - in: body
+                  name: Body
+                  required: true
+                  schema:
+                    $ref: '#/definitions/Product'
+            responses:
+                "201":
+                    $ref: '#/responses/noContent'
     /products/{id}:
         delete:
             operationId: deleteProduct
             parameters:
-                - format: int64
+                - description: The id of the product for which the operation relates
+                  format: int64
                   in: path
                   name: id
                   required: true
@@ -107,7 +124,15 @@ paths:
                 - products
         get:
             description: Returns a single product
-            operationId: listSingle
+            operationId: listSingleProduct
+            parameters:
+                - description: The id of the product for which the operation relates
+                  format: int64
+                  in: path
+                  name: id
+                  required: true
+                  type: integer
+                  x-go-name: ID
             responses:
                 "200":
                     $ref: '#/responses/productResponse'
@@ -115,18 +140,6 @@ paths:
                     $ref: '#/responses/errorResponse'
             tags:
                 - products
-        put:
-            description: Updates a product
-            operationId: updateProduct
-            parameters:
-                - in: body
-                  name: Body
-                  required: true
-                  schema:
-                    $ref: '#/definitions/Product'
-            responses:
-                "201":
-                    $ref: '#/responses/noContent'
 produces:
     - application/json
 responses:
@@ -142,6 +155,10 @@ responses:
             $ref: '#/definitions/ValidationError'
     noContent:
         description: ""
+    productResponse:
+        description: ""
+        schema:
+            $ref: '#/definitions/Product'
     productsResponse:
         description: ""
         schema:

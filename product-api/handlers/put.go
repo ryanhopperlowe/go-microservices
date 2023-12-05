@@ -5,13 +5,15 @@ import (
 	"product-api/data"
 )
 
-// swagger:route PUT /products/{id} updateProduct
+// swagger:route PUT /products updateProduct
 // Updates a product
 // responses:
 //	201: noContent
 
 // Update updates a product in the data store
 func (p *Products) Update(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+
 	p.l.Println("[DEBUG] getting product from context")
 	prod := r.Context().Value(KeyProduct{}).(*data.Product)
 	p.l.Println("[DEBUG] updating record with id", prod.ID)

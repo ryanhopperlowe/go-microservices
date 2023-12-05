@@ -14,6 +14,7 @@ import (
 
 // Create adds a product to the data store
 func (p *Products) Create(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
 	p.l.Println("Handle POST Product")
 
 	product := r.Context().Value(KeyProduct{}).(*data.Product)

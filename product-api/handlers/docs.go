@@ -36,17 +36,25 @@ type errorValidationWrapper struct {
 }
 
 // swagger:response productsResponse
-type productsResponse struct {
+type productsResponseWrapper struct {
 	// All products in the system
 	// in: body
 	Body []data.Product
 }
 
+// swagger:response productResponse
+type productResponseWrapper struct {
+	// A product in the system
+	// in: body
+	Body data.Product
+}
+
 // swagger:response noContent
 type productsNoContent struct{}
 
-// swagger:parameters deleteProduct
+// swagger:parameters listSingleProduct deleteProduct
 type productIDParameterWrapper struct {
+	// The id of the product for which the operation relates
 	// in: path
 	// required: true
 	ID int `json:"id"`
